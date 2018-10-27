@@ -16,11 +16,11 @@ $_documentContainer.innerHTML = `<dom-module id="paper-button-styles">
   <template>    
   <style>
    paper-button {
-      border-radius: 4px;
-      font-size: 12px;
+      border-radius: 1px;
+      font-size: 14px;
       font-family: 'Roboto-Bold';
-      height: 40px;
-      padding: 0px 20px;
+      height: 50px;
+      padding: 15px 45px;
       box-sizing: border-box;
       margin: 0px;
    }

@@ -27,6 +27,8 @@ import './smart/smart-config.js';
 import './shared-styles/theme';
 import './shared-styles/paper-button-styles';
 import './my-navigation.js';
+import './my-cookies.js';
+import './api/securityflow-validatesession.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -100,7 +102,9 @@ class MyApp extends PolymerElement {
       <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
       </app-location>
 
-      <smart-config server="localhost" port="9081" tenant="sptest"></smart-config>
+      <smart-config id="globals" server="192.168.1.34" port="8045" tenant="sptest"></smart-config>
+      <my-cookies id="cookies" session-id="{{sessionId}}"></my-cookies>
+      <securityflow-validatesession id="validatesess"></securityflow-validatesession>
 
       <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
       </app-route>
@@ -109,7 +113,7 @@ class MyApp extends PolymerElement {
         <!-- Drawer content -->
         <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
           <app-toolbar><img id="header-logo" src="./src/images/ithings-logo.png" alt="iThings Health"></app-toolbar>
-          <my-navigation currentPage="[[page]]" rootPath="[[rootPath]]"></my-navigation>
+          <my-navigation role-name="[[role]]" current-page="[[currentPage]]" rootPath="[[rootPath]]"></my-navigation>
           </iron-selector>
         </app-drawer>
 
@@ -126,6 +130,7 @@ class MyApp extends PolymerElement {
 
           <div class="main-content">
               <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
+                <my-login name="login" on-login-success="_loggedIn"></my-login>
                 <my-view1 name="view1"></my-view1>
                 <my-view2 name="view2"></my-view2>
                 <my-view3 name="view3"></my-view3>
@@ -144,6 +149,16 @@ class MyApp extends PolymerElement {
         reflectToAttribute: true,
         observer: '_pageChanged'
       },
+      sessionId: {
+          type: String,
+      },
+      role: {
+          type: String
+      },
+      currentPage: {
+          type: String,
+          notify: true
+      },
       profileName: {
           type: String,
           reflectToAttribute: true
@@ -157,7 +172,11 @@ class MyApp extends PolymerElement {
         reflectToAttribute: true
       },
       routeData: Object,
-      subroute: Object
+      subroute: Object,
+      validSession: {
+          type: Boolean,
+          value: false
+      }
     };
   }
 
@@ -177,9 +196,25 @@ class MyApp extends PolymerElement {
      //
      // If no page was found in the route data, page will be an empty string.
      // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
+      if ((this.page != 'login') && !this.validSession) {
+          var elem = this;
+          var sess = (this.$.cookies.getCookie());
+          if  ((sess != undefined) && (sess.length > 0)) {
+            this.$.validatesess.validSession(sess, function() {
+                elem.$.globals.sessionId = sess;
+                elem.validSession = true;
+                elem._getPermittedFeatures(page);
+            }, function() {
+                elem.page = "login";
+            });
+          } else {
+              this.page = "login";
+          }
+      }
+
     if (!page) {
-      this.page = 'view1';
-    } else if (['view1', 'view2', 'view3'].indexOf(page) !== -1) {
+      this.page = 'login';
+    } else if (['view1', 'view2', 'view3', 'login'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -196,7 +231,11 @@ class MyApp extends PolymerElement {
     //
     // Note: `polymer build` doesn't like string concatenation in the import
     // statement, so break it up.
+    this.currentPage = page;
     switch (page) {
+      case 'login':
+        import('./my-login.js');
+        break;
       case 'view1':
         import('./my-view1.js');
         break;
@@ -210,6 +249,26 @@ class MyApp extends PolymerElement {
         import('./my-view404.js');
         break;
     }
+  }
+
+  _loggedIn(event) {
+      this.sessionId = event.detail.sessionId;
+      this.$.globals.sessionId = this.sessionId;
+      this.validSession = true;
+      this._getPermittedFeatures("");
+  }
+
+  _getPermittedFeatures(page) {
+      var elem = this;
+      this.$.validatesess.getPermittedFeatures(function(event) {
+          elem.role = event.roleName;
+          if (page == "") {
+              page = "view1";
+          }
+          elem.page = page;
+      }, function(event) {
+          console.log(event);
+      });
   }
 }
 

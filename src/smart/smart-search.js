@@ -56,7 +56,7 @@ class SmartSearch extends PolymerElement {
   _handleError(evt) {
     var error = evt.detail.errors[0];
     if (error != undefined) {
-        this.dispatchEvent(new CustomEvent("smart-search-error", { "code" : error.code, "context" : error.context }));
+        this.dispatchEvent(new CustomEvent("smart-search-error", { detail: { "code" : error.code, "context" : error.context } }));
     }
   }
 }

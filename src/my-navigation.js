@@ -73,32 +73,34 @@ class MyNavigation extends PolymerElement {
 
       </style>
 
-      <iron-selector selected="[[currentPage]]" attr-for-selected="name" class="drawer-list" role="navigation">
-        <template is="dom-if" if="[[showPrevious]]">
-            <div class="backmenu">
-                <a name="[[previousPage]]" href="[[rootPath]][[previousPage]]">
-                    <iron-icon icon="ithings-icons:arrow-back"></iron-icon>
-                    [[previousLabel]]
-                </a>
+      <template is="dom-if" if="[[showMenu]]">
+          <iron-selector selected="[[currentPage]]" attr-for-selected="name" class="drawer-list" role="navigation">
+            <template is="dom-if" if="[[showPrevious]]">
+                <div class="backmenu">
+                    <a name="[[previousPage]]" href="[[rootPath]][[previousPage]]">
+                        <iron-icon icon="ithings-icons:arrow-back"></iron-icon>
+                        [[previousLabel]]
+                    </a>
+                </div>
+            </template>
+            <div class="mainmenu">
+                <template is="dom-repeat" items="[[currentNavigation]]">
+                    <a name="[[item.page]]" href="[[rootPath]][[item.page]]">
+                        <iron-icon icon="ithings-icons:[[item.icon]]"></iron-icon>
+                        [[item.label]]
+                    </a>
+                </template>
             </div>
-        </template>
-        <div class="mainmenu">
-            <template is="dom-repeat" items="[[currentNavigation]]">
-                <a name="[[item.page]]" href="[[rootPath]][[item.page]]">
-                    <iron-icon icon="ithings-icons:[[item.icon]]"></iron-icon>
-                    [[item.label]]
-                </a>
-            </template>
-        </div>
-        <div class="globalmenu">
-            <template is="dom-repeat" items="[[globals]]">
-                <a name="[[item.page]]" href="[[rootPath]][[item.page]]">
-                    <iron-icon icon="ithings-icons:[[item.icon]]"></iron-icon>
-                    [[item.label]]
-                </a>
-            </template>
-        </div>
-      </iron-selector>
+            <div class="globalmenu">
+                <template is="dom-repeat" items="[[globals]]">
+                    <a name="[[item.page]]" href="[[rootPath]][[item.page]]">
+                        <iron-icon icon="ithings-icons:[[item.icon]]"></iron-icon>
+                        [[item.label]]
+                    </a>
+                </template>
+            </div>
+          </iron-selector>
+      </template>
     `;
   }
 
@@ -122,9 +124,8 @@ class MyNavigation extends PolymerElement {
         },
         currentPage: {
             type: String,
-            reflectToAttribute: true,
-            observer: '_changeNavigation',
-            value: ""
+            notify: true,
+            observer: '_changeNavigation'
         },
         currentNavigation: {
             type: Array,
@@ -173,6 +174,13 @@ class MyNavigation extends PolymerElement {
         pageNavigation: {
             type: Object,
             value: {}
+        },
+        showMenu: {
+            type: Boolean,
+            value: true
+        },
+        roleName: {
+            type: String
         }
       };
   }
@@ -182,13 +190,28 @@ class MyNavigation extends PolymerElement {
       this.pageNavigation = {};
       this.pageNavigation['providerdetails'] = this.firstlevel['tecadmin'];
       this.pageNavigation['providerusers'] = this.firstlevel['tecadmin'];
+      this.pageNavigation['login'] = [];
       this.currentNavigation = [ { label: "View1", page: "view1", icon: "patient-dashboard" },
                     { label: "View2", page: "view2", icon: "patient-dashboard" },
                     { label: "View3", page: "view3", icon: "patient-dashboard" }];
   }
 
   _changeNavigation(page) {
-      //this.currentNavigation = this.pageNavigation[page];
+      if (this.currentPage == 'login') {
+          this.showMenu = false;
+      } else {
+          this.showMenu = true;
+      }
+
+      this.currentNavigation = this.pageNavigation[this.currentPage];
+
+      if (this.currentNavigation == undefined) {
+          var role = this.roleName;
+          if (role == 'DefaultRole') {
+              role = "tecadmin";
+          }
+          this.currentNavigation = this.firstlevel[role];
+      }
   }
 }
 

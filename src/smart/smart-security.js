@@ -43,16 +43,16 @@ class SmartSecurity extends PolymerElement {
       var response = evt.detail.responses[0];
       sessionId = response[SESSIONID];
       this.$.globals.sessionId = sessionId;
-      this.dispatchEvent(new CustomEvent("smart-login-success", { "sessionId": sessionId }));
+      this.dispatchEvent(new CustomEvent("smart-login-success", { detail: { "sessionId": sessionId } }));
   }
 
   handleError(evt) {
     var error = evt.detail.error[0];
     if (error != undefined) {
         if (error.context.startsWith("Invalid credentials for")){
-            this.dispatchEvent(new CustomEvent("smart-invalid-login", { "user" : this.user }));
+            this.dispatchEvent(new CustomEvent("smart-invalid-login", { detail: { "user" : this.user } }));
         } else {
-            this.dispatchEvent(new CustomEvent("smart-error-login", { "code" : error.code, "context" : error.context }));
+            this.dispatchEvent(new CustomEvent("smart-error-login", { detail: { "code" : error.code, "context" : error.context } }));
         }
     }
   }

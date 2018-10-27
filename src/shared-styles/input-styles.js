@@ -19,7 +19,7 @@ $_documentContainer.innerHTML = `
   input{
     width: 100%;
     height: 44px;
-    border: 2px solid var(--medium-blue-grey);
+    border: 1px solid var(--medium-blue-grey);
     background-color: white;
     outline: none;
     text-indent: 10px;
@@ -32,7 +32,10 @@ $_documentContainer.innerHTML = `
       outline: none;
     }
     input:focus {
-      border: 2px solid var(--app-accent-color);
+      border: 1px solid var(--app-accent-color);
+    }
+    input:required {
+      border: 1px solid var(--app-accent-color);
     }
     </style>
   </template>

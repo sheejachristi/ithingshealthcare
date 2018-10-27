@@ -3,6 +3,9 @@ import '@polymer/iron-ajax/iron-ajax.js';
 import "./smart-config.js"
 import "./smart-admin-config.js"
 
+var SMART_ACTION_LOOKUP = 'lookup';
+var ERROR = "errors";
+var RESPONSES = "responses";
 
 /**
  * `smart-client`
@@ -142,7 +145,7 @@ class SmartClient extends PolymerElement {
               errors = response[ERROR];
               this._fireError(errors);
           } else {
-              this.dispatchEvent(new CustomEvent("smart-response", { "responses" : responses }));
+              this.dispatchEvent(new CustomEvent("smart-response", { detail: { "responses" : responses } }));
           }
       }
   }
@@ -156,12 +159,12 @@ class SmartClient extends PolymerElement {
           err.context = oneerr["context"];
           errs.push(err);
       }
-      this.dispatchEvent(new CustomEvent("smart-error", { "error" : errs }));
+      this.dispatchEvent(new CustomEvent("smart-error", { detail: { "error" : errs } }));
   }
 
   _handleError(error) {
       console.log(error);
-      this.dispatchEvent(new CustomEvent("smart-network-error", { "error" : error.detail }));
+      this.dispatchEvent(new CustomEvent("smart-network-error", { detail: { "error" : error.detail } }));
   }
 }
 
