@@ -32,6 +32,15 @@ class MyCookies extends PolymerElement {
         sessKey: {
             type: String,
             value: "Session-Id"
+        },
+        userId: {
+            type: String,
+            value: "",
+            observer: "_setCookie"
+        },
+        userKey: {
+            type: String,
+            value: "User-Id"
         }
     }
   }
@@ -42,12 +51,15 @@ class MyCookies extends PolymerElement {
   }
 
   _setCookie() {
+      var exdays = 5;
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays*24*60*60*1000));
+      var expires = "expires="+ d.toUTCString();
       if ((this.sessionId != undefined) && (this.sessionId.length > 0)) {
-          var exdays = 5;
-          var d = new Date();
-          d.setTime(d.getTime() + (exdays*24*60*60*1000));
-          var expires = "expires="+ d.toUTCString();
           document.cookie = this.sessKey + "=" + this.sessionId + ";" + expires + ";path=/";
+      }
+      if ((this.userId != undefined) && (this.userId.length > 0)) {
+          document.cookie = this.userKey + "=" + this.userId + ";" + expires + ";path=/";
       }
   }
 
@@ -56,7 +68,11 @@ class MyCookies extends PolymerElement {
   }
 
   getCookie() {
-    var name = this.sessKey + "=";
+      return this.getKey(this.sessKey);
+  }
+
+  getKey(key) {
+    var name = key + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
     for(var i = 0; i < ca.length; i++) {
@@ -69,6 +85,10 @@ class MyCookies extends PolymerElement {
         }
     }
     return "";
+  }
+
+  getUserId() {
+      return this.getKey(this.userKey);
   }
 }
 

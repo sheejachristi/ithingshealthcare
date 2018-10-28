@@ -28,7 +28,9 @@ import './shared-styles/theme';
 import './shared-styles/paper-button-styles';
 import './my-navigation.js';
 import './my-cookies.js';
+import './my-providerdetails.js';
 import './api/securityflow-validatesession.js';
+import './api/telehealthcareflow-lookup.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -103,8 +105,9 @@ class MyApp extends PolymerElement {
       </app-location>
 
       <smart-config id="globals" server="192.168.1.34" port="8045" tenant="sptest"></smart-config>
-      <my-cookies id="cookies" session-id="{{sessionId}}"></my-cookies>
+      <my-cookies id="cookies" user-Id="{{userId}}" session-id="{{sessionId}}"></my-cookies>
       <securityflow-validatesession id="validatesess"></securityflow-validatesession>
+      <telehealthcareflow-lookup id="lookup" on-lookup-success="_setupProfile"></telehealthcareflow-lookup>
 
       <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
       </app-route>
@@ -130,7 +133,8 @@ class MyApp extends PolymerElement {
 
           <div class="main-content">
               <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-                <my-login name="login" on-login-success="_loggedIn"></my-login>
+                <my-login id="login" name="login" on-login-success="_loggedIn"></my-login>
+                <my-providerdetails id="providerdetails" name="providerdetails"></my-providerdetails>
                 <my-view1 name="view1"></my-view1>
                 <my-view2 name="view2"></my-view2>
                 <my-view3 name="view3"></my-view3>
@@ -150,6 +154,9 @@ class MyApp extends PolymerElement {
         observer: '_pageChanged'
       },
       sessionId: {
+          type: String,
+      },
+      userId: {
           type: String,
       },
       role: {
@@ -176,6 +183,10 @@ class MyApp extends PolymerElement {
       validSession: {
           type: Boolean,
           value: false
+      },
+      profile: {
+          type: Object,
+          value: {}
       }
     };
   }
@@ -201,9 +212,10 @@ class MyApp extends PolymerElement {
           var sess = (this.$.cookies.getCookie());
           if  ((sess != undefined) && (sess.length > 0)) {
             this.$.validatesess.validSession(sess, function() {
+                elem.userId = elem.$.cookies.getUserId();
                 elem.$.globals.sessionId = sess;
                 elem.validSession = true;
-                elem._getPermittedFeatures(page);
+                elem._setupApplication(page);
             }, function() {
                 elem.page = "login";
             });
@@ -214,7 +226,7 @@ class MyApp extends PolymerElement {
 
     if (!page) {
       this.page = 'login';
-    } else if (['view1', 'view2', 'view3', 'login'].indexOf(page) !== -1) {
+    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -233,6 +245,9 @@ class MyApp extends PolymerElement {
     // statement, so break it up.
     this.currentPage = page;
     switch (page) {
+      case 'providerdetails':
+        this.$.providerdetails.loadData();
+        break;
       case 'login':
         import('./my-login.js');
         break;
@@ -253,12 +268,13 @@ class MyApp extends PolymerElement {
 
   _loggedIn(event) {
       this.sessionId = event.detail.sessionId;
+      this.userId = event.detail.userId;
       this.$.globals.sessionId = this.sessionId;
       this.validSession = true;
-      this._getPermittedFeatures("");
+      this._setupApplication("");
   }
 
-  _getPermittedFeatures(page) {
+  _setupApplication(page) {
       var elem = this;
       this.$.validatesess.getPermittedFeatures(function(event) {
           elem.role = event.roleName;
@@ -269,6 +285,23 @@ class MyApp extends PolymerElement {
       }, function(event) {
           console.log(event);
       });
+
+      this._getProfile();
+  }
+
+  _setupProfile(event) {
+      if (event.detail.object != undefined) {
+          this.profile = event.detail.object.result[0];
+          if (this.profile != undefined) {
+              this.profileName = this.profile.name;
+          }
+      }
+  }
+
+  _getProfile() {
+      if ((this.userId != undefined) || (this.userId.length > 0)) {
+          this.$.lookup.lookup("Profile", this.userId);
+      }
   }
 }
 

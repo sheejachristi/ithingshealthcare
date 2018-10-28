@@ -85,6 +85,11 @@ $_documentContainer.innerHTML = `<dom-module id="shared-styles">
         font-family: 'Roboto-Regular';
         padding-top: 20px;
     }
+
+    .content-title h2 {
+        font-size: 24px;
+        color: #11367A;
+    }
     </style>
   </template>
 </dom-module>`;

@@ -70,7 +70,7 @@ class MyLogin extends PolymerElement {
 
   _loggedIn(event) {
       console.log(event);
-      this.dispatchEvent(new CustomEvent("login-success", { detail: { "sessionId": event.detail.sessionId } }));
+      this.dispatchEvent(new CustomEvent("login-success", { detail: { "sessionId": event.detail.sessionId, "userId": this.user } }));
   }
 }
 
