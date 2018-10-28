@@ -65,6 +65,7 @@ class MyCookies extends PolymerElement {
 
   resetCookie() {
       this.sessionId = "";
+      this.userId = "";
   }
 
   getCookie() {

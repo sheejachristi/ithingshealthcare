@@ -29,6 +29,8 @@ import './shared-styles/paper-button-styles';
 import './my-navigation.js';
 import './my-cookies.js';
 import './my-providerdetails.js';
+import './my-providerusers.js';
+import './my-serviceusers.js';
 import './api/securityflow-validatesession.js';
 import './api/telehealthcareflow-lookup.js';
 
@@ -58,6 +60,7 @@ class MyApp extends PolymerElement {
 
         .welcome-text {
             font-size: 16px;
+            margin: 10px;
         }
 
         app-drawer-layout{
@@ -99,6 +102,10 @@ class MyApp extends PolymerElement {
         #contentContainer {
             background-color: #fff !important;
         }
+
+        paper-button.sign-in-btn {
+            height: 30px;
+        }
       </style>
 
       <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
@@ -128,6 +135,7 @@ class MyApp extends PolymerElement {
               <!--<paper-icon-button icon="my-icons:menu" drawer-toggle=""></paper-icon-button>-->
               <span class="flex">&nbsp;</span>
               <div class="welcome-text">Welcome [[profileName]]</div>
+              <paper-button class="filledWhite sign-in-btn" on-tap="_logout" hidden$="[[!validSession]]">logout</paper-button>
             </app-toolbar>
           </app-header>
 
@@ -135,6 +143,8 @@ class MyApp extends PolymerElement {
               <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
                 <my-login id="login" name="login" on-login-success="_loggedIn"></my-login>
                 <my-providerdetails id="providerdetails" name="providerdetails"></my-providerdetails>
+                <my-providerusers id="providerusers" name="providerusers"></my-providerusers>
+                <my-serviceusers id="serviceusers" name="serviceusers"></my-serviceusers>
                 <my-view1 name="view1"></my-view1>
                 <my-view2 name="view2"></my-view2>
                 <my-view3 name="view3"></my-view3>
@@ -226,7 +236,7 @@ class MyApp extends PolymerElement {
 
     if (!page) {
       this.page = 'login';
-    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails'].indexOf(page) !== -1) {
+    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails', 'providerusers', 'serviceusers'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -245,6 +255,12 @@ class MyApp extends PolymerElement {
     // statement, so break it up.
     this.currentPage = page;
     switch (page) {
+      case 'serviceusers':
+          this.$.serviceusers.loadData();
+          break;
+      case 'providerusers':
+          this.$.providerusers.loadData();
+          break;
       case 'providerdetails':
         this.$.providerdetails.loadData();
         break;
@@ -302,6 +318,22 @@ class MyApp extends PolymerElement {
       if ((this.userId != undefined) || (this.userId.length > 0)) {
           this.$.lookup.lookup("Profile", this.userId);
       }
+  }
+
+  _logout() {
+      var elem = this;
+      var sess = (this.$.cookies.getCookie());
+      if  ((sess != undefined) && (sess.length > 0)) {
+        this.$.validatesess.logout(sess, function() {
+            elem.$.cookies.resetCookie();
+            elem.validSession = false;
+        }, function() {
+        });
+      }
+
+      this.$.cookies.resetCookie();
+      this.profileName = "";
+      this.page = "login";
   }
 }
 

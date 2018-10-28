@@ -136,7 +136,7 @@ class MyNavigation extends PolymerElement {
             value: [
                 { label: "MY ACCOUNT", page: "accountsetup", icon: "account" }, 
                 { label: "SUPPORT", page: "supportpage", icon: "support" }, 
-                { label: "LOGOUT", page: "logoutpage", icon: "contact" }
+                { label: "CONTACT", page: "contactpage", icon: "contact" }
             ]
         },
         firstlevel: {
@@ -146,7 +146,7 @@ class MyNavigation extends PolymerElement {
                     { label: "SERVICE PROVIDER DETAILS", page: "providerdetails" }, 
                     { label: "USERS", page: "providerusers" }
                 ],
-                "tecaccessor": [ 
+                "tecassessor": [ 
                     { label: "SERVICE USERS", page: "serviceusers" }, 
                     { label: "CARE HOMES", page: "carehomes" }
                 ],
