@@ -12,7 +12,7 @@ import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import './shared-styles.js';
 import './search/search-view.js';
 import './search/search-listview.js';
-import './dialogs/user-add.js';
+import './dialogs/subscriber-add.js';
 import './api/telehealthcareflow-searchsubscribers.js';
 
 class MyServiceUsers extends PolymerElement {
@@ -64,7 +64,7 @@ class MyServiceUsers extends PolymerElement {
       <search-listview class="search-result" columns="[[columns]]"
         search-result="{{searchResult}}" mode="{{_mode}}"></search-listview>
       <telehealthcareflow-searchsubscribers id="searchsubscribers" on-subscriber-result="_setupResult"></telehealthcareflow-searchsubscribers>
-      <user-add id="addsubscriber"></user-add>
+      <subscriber-add id="addsubscriber" on-serviceuser-created="_serviceUserEdit"></subscriber-add>
     `;
   }
 
@@ -120,6 +120,12 @@ class MyServiceUsers extends PolymerElement {
 
   _openCreateNew() {
       this.$.addsubscriber.open();
+  }
+
+  _serviceUserEdit(event) {
+      this._triggerSearch();
+      var email = event.detail.email;
+      console.log(email);
   }
 }
 

@@ -25,6 +25,10 @@ class SmartConfig extends PolymerElement {
       return values["tenant"];
   }
 
+  set tenant(ten) {
+      values["tenant"] = ten;
+  }
+
   set sessionId(sess) {
       values["sessionId"] = sess;
   }

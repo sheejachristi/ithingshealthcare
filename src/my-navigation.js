@@ -108,7 +108,7 @@ class MyNavigation extends PolymerElement {
       return {
         previousPage: {
             type: String,
-            value: "subscriberlist"
+            value: "serviceusers"
         },
         previousLabel: {
             type: String,
@@ -158,11 +158,11 @@ class MyNavigation extends PolymerElement {
         secondlevel: {
             type: Object,
             value: { 
-                "SERVICE PROVIDER": [ 
+                "SERVICE USER": [ 
                     { label: "GENERAL DETAILS", page: "subscribergeneral" }, 
                     { label: "MANAGE EVENTS", page: "manageevents" }, 
                     { label: "MANAGE DEVICES", page: "managedevices" }, 
-                    { label: "MANAGE CARETAKERS", page: "managecaretakers" }
+                    { label: "MANAGE CAREGIVERS", page: "managecaretakers" }
                 ],
                 "CARE HOME": [ 
                     { label: "GENERAL DETAILS", page: "carehomegeneral" }, 
@@ -188,12 +188,15 @@ class MyNavigation extends PolymerElement {
   ready() {
       super.ready();
       this.pageNavigation = {};
-      this.pageNavigation['providerdetails'] = this.firstlevel['tecadmin'];
-      this.pageNavigation['providerusers'] = this.firstlevel['tecadmin'];
       this.pageNavigation['login'] = [];
-      this.currentNavigation = [ { label: "View1", page: "view1", icon: "patient-dashboard" },
-                    { label: "View2", page: "view2", icon: "patient-dashboard" },
-                    { label: "View3", page: "view3", icon: "patient-dashboard" }];
+      this.pageNavigation['subscribergeneral'] = this.secondlevel["SERVICE USER"];
+      this.pageNavigation['manageevents'] = this.secondlevel["SERVICE USER"];
+      this.pageNavigation['managedevices'] = this.secondlevel["SERVICE USER"];
+      this.pageNavigation['managecaretakers'] = this.secondlevel["SERVICE USER"];
+
+      this.pageNavigation['carehomegeneral'] = this.secondlevel["CARE HOME"];
+      this.pageNavigation['manageevents'] = this.secondlevel["CARE HOME"];
+      this.pageNavigation['managedevices'] = this.secondlevel["CARE HOME"];
   }
 
   _changeNavigation(page) {

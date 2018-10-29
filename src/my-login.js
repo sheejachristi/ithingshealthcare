@@ -15,6 +15,7 @@ import './shared-styles/shared-styles.js';
 import './shared-styles/input-styles.js';
 import './shared-styles/paper-button-styles.js';
 import './smart/smart-security.js';
+import './smart/smart-config.js';
 
 class MyLogin extends PolymerElement {
   static get template() {
@@ -25,6 +26,7 @@ class MyLogin extends PolymerElement {
         }
       </style>
 
+      <smart-config id="globals"></smart-config>
       <smart-security id="security" user="[[user]]" password="[[password]]" on-smart-login-success="_loggedIn"></smart-security>
 
       <div class="card-header">
@@ -34,12 +36,16 @@ class MyLogin extends PolymerElement {
         <div class="content-single">
             <div class="row">
                 <div class="element">
+                    <div class="inputlabel">Service Provider</div>
+                    <input id="tenant" required type="text" placeholder="Please enter your service provider code"></input>
+                </div>
+                <div class="element">
                     <div class="inputlabel">User Email</div>
-                    <input id="email" required type="email"></input>
+                    <input id="email" required type="email" placeholder="Please enter your email id registered"></input>
                 </div>
                 <div class="element">
                     <div class="inputlabel">Password</div>
-                    <input id="password" type="password" required></input>
+                    <input id="password" type="password" required placeholder="Please enter your password"></input>
                 </div>
             </div>
         </div>
@@ -53,6 +59,9 @@ class MyLogin extends PolymerElement {
 
   static get properties() {
       return {
+          tenant: {
+              type: String,
+          },
           user: {
               type: String,
           },
@@ -63,6 +72,8 @@ class MyLogin extends PolymerElement {
   }
 
   _loginNow() {
+      this.tenant = this.$.tenant.value;
+      this.$.globals.tenant = this.tenant;
       this.user = this.$.email.value;
       this.password = this.$.password.value;
       this.$.security.loginSmart();

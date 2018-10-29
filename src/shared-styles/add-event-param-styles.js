@@ -32,9 +32,6 @@ $_documentContainer.innerHTML = `
     .dialog-content-container {
       padding: 0px 8px 21px 26px;
     }
-    paper-button.filledWhite{
-      width: 200px;
-    }
     .event-params-basic-detail-view {
       background: var(--light-theme-background-color);
       padding: 20px 0px 28px 32px;

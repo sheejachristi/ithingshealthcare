@@ -40,7 +40,7 @@ $_documentContainer.innerHTML = `<dom-module id="shared-styles">
         padding-bottom: 20px;
         padding-top: 20px;
         background-color: #fff;
-        min-height: 390px;
+        min-height: 200px;
         @apply --layout-vertical;
     }
 
@@ -54,7 +54,7 @@ $_documentContainer.innerHTML = `<dom-module id="shared-styles">
         padding-bottom: 20px;
         padding-top: 20px;
         background-color: #fff;
-        min-height: 390px;
+        min-height: 200px;
         @apply --layout-vertical;
     }
 
