@@ -70,11 +70,6 @@ class SearchListView extends PolymerElement {
         paper-button.search-btn{
           width: 110px;
         }
-        ith-template-selection-dialog{
-          position: fixed;
-          bottom: 200px;
-          right: 0px;
-        }
         .loader-container{
           position: relative;
           min-height: 100px;
@@ -88,10 +83,10 @@ class SearchListView extends PolymerElement {
         .from-drop-down{
           margin-right: 16px;
         }
-        ith-manage-event-search-item.event-row{
+        search-item.event-row{
           background: var(--table-background-color);
         }
-        ith-manage-event-search-item.event-row:nth-of-type(odd){
+        search-item.event-row:nth-of-type(odd){
           background: var(--very-pale-blue-grey);
         }
         #search {

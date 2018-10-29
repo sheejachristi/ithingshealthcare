@@ -12,7 +12,7 @@ import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '../shared-styles/shared-styles.js';
 import '../smart/smart-client.js';
 
-class TeleHealthcareFlowSearchTECUsers extends PolymerElement {
+class TeleHealthcareFlowCreateTECUser extends PolymerElement {
   static get template() {
     return html`
       <smart-client id="client" flow="TeleHealthcareFlow" flow-event="{{_postEvent}}" on-smart-network-error="_handleError" on-smart-error="_handleError" on-smart-response="_handleResponse" ></smart-client>
@@ -23,7 +23,7 @@ class TeleHealthcareFlowSearchTECUsers extends PolymerElement {
     return {
       _postEvent: {
           type: String,
-          value: "SearchTECUsers"
+          value: "CreateTECUser"
       },
     };
   }
@@ -39,24 +39,28 @@ class TeleHealthcareFlowSearchTECUsers extends PolymerElement {
       } else if (e.detail.error != undefined) {
           response = e.detail.error;
       }
-    this.dispatchEvent(new CustomEvent("search-error", { detail: { 'error': response}}));
+    this.dispatchEvent(new CustomEvent("createuser-error", { detail: { 'error': response}}));
   }
 
   _handleResponse(e) {
     var response = e.detail.responses[0];
-    this.dispatchEvent(new CustomEvent("tec-users", { detail: { 'users': response }}));
+    this.dispatchEvent(new CustomEvent("created-user", { detail: { 'message': response }}));
   }
 
-  search(qsearch) {
+  createtecuser(sp, email, name, phone, role) {
       this.$.client._dataChanged();
-      this._postEvent = "SearchTECUsers";
+      this._postEvent = "CreateTECUser";
       var postData = {};
-      postData.search = qsearch;
+      postData.email = email;
+      postData.name = name;
+      postData.phone = phone;
+      postData.role = role;
+
       var postTo = {};
-      postTo['FlowAdmin'] = "TeleHealthcareFlow";
+      postTo['ServiceProvider'] = sp;
 
       this.$.client.postSmart(postTo, postData);
   }
 }
 
-window.customElements.define('telehealthcareflow-searchtecusers', TeleHealthcareFlowSearchTECUsers);
+window.customElements.define('telehealthcareflow-createtecuser', TeleHealthcareFlowCreateTECUser);

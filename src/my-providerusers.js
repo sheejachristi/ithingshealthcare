@@ -64,7 +64,7 @@ class MyProviderUsers extends PolymerElement {
       <search-listview class="search-result" columns="[[columns]]"
         search-result="{{searchResult}}" mode="{{_mode}}"></search-listview>
       <telehealthcareflow-searchtecusers id="searchusers" on-tec-users="_setupResult"></telehealthcareflow-searchtecusers>
-      <user-add with-backdrop id="adduser"></user-add>
+      <user-add id="adduser" on-user-created="_triggerSearch"></user-add>
     `;
   }
 

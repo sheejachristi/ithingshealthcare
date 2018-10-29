@@ -2,15 +2,20 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-dialog-behavior/paper-dialog-shared-styles';
+import '@polymer/paper-radio-button/paper-radio-button.js';
+import '@polymer/paper-radio-group/paper-radio-group.js';
 import { PaperDialogBehavior } from '@polymer/paper-dialog-behavior/paper-dialog-behavior';
+
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '../shared-styles/shared-styles';
 import '../shared-styles/input-styles';
 import '../shared-styles/add-event-param-styles';
+import '../api/telehealthcareflow-createtecuser.js';
+import '../smart/smart-config.js';
+
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
-import {IronOverlayBehavior} from '@polymer/iron-overlay-behavior/iron-overlay-behavior.js';
 
 class UserAdd extends mixinBehaviors([PaperDialogBehavior], PolymerElement) {
   static get template() {
@@ -39,10 +44,6 @@ class UserAdd extends mixinBehaviors([PaperDialogBehavior], PolymerElement) {
                         <input id="email" required type="email"></input>
                     </div>
                     <div class="element">
-                        <div class="inputlabel">Password</div>
-                        <input id="password" type="password" required></input>
-                    </div>
-                    <div class="element">
                         <div class="inputlabel">Name</div>
                         <input id="name" type="text" required></input>
                     </div>
@@ -50,16 +51,24 @@ class UserAdd extends mixinBehaviors([PaperDialogBehavior], PolymerElement) {
                         <div class="inputlabel">Phone</div>
                         <input id="phone" type="text" required></input>
                     </div>
+                    <div class="element">
+                        <paper-radio-group id="role" selected="tecassessor">
+                            <paper-radio-button name="tecassessor">TEC Assessor</paper-radio-button>
+                            <paper-radio-button name="techassistant">Technical Assistant</paper-radio-button>
+                        </paper-radio-group>
+                    </div>
                 </div>
             </div>
           </div>
       </div>
     </paper-dialog-scrollable>
     <div class="btn-container layout vertical end">
-      <paper-button class="filledWhite">
+      <paper-button class="filledWhite" on-tap="_createTECUser">
         add user
       </paper-button>
     </div>
+    <telehealthcareflow-createtecuser id="createuser" on-created-user="_createdUser"></telehealthcareflow-createtecuser>
+    <smart-config id="globals"></smart-config>
    `;
   }
 
@@ -80,6 +89,21 @@ class UserAdd extends mixinBehaviors([PaperDialogBehavior], PolymerElement) {
   }
 
   _closeDialog() {
+  }
+
+  _createTECUser() {
+      var spname = this.$.globals.tenant;
+      var email = this.$.email.value;
+      var name = this.$.name.value;
+      var phone = this.$.phone.value;
+      var role = this.$.role.selected;
+      this.$.createuser.createtecuser(spname, email, name, phone, role);
+  }
+
+  _createdUser(event) {
+      var email = this.$.email.value;
+      this.close();
+      this.dispatchEvent(new CustomEvent('user-created', { detail: { 'email': email }}));
   }
 
 }
