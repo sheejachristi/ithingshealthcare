@@ -24,7 +24,7 @@ $_documentContainer.innerHTML = `
     outline: none;
     text-indent: 10px;
     font-family: 'Roboto-Regular';
-    font-size: 18px;
+    font-size: 14px;
     color: var(--app-text-color);
     box-sizing: border-box;
     }

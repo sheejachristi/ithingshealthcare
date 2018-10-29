@@ -137,8 +137,7 @@ class SearchListView extends PolymerElement {
         <template is="dom-repeat" items="[[searchResult]]" observe="#">
             <search-item template="[[item]]" class="event-row"
                   columns="[[columns]]"
-                  on-add-selection="_addToSelection"
-                  on-remove-selection="_removeFromSelection">
+                  on-action-item="_doAction">
             </search-item>
         </template>      
      </div>
@@ -212,6 +211,12 @@ class SearchListView extends PolymerElement {
     }
 
     return false;
+  }
+
+  _doAction(event) {
+      var action = event.detail.action;
+      var object = event.detail.data;
+      this.dispatchEvent(new CustomEvent("action-" + action, { detail: { data: object }}));
   }
 }
 

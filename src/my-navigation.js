@@ -24,6 +24,20 @@ class MyNavigation extends PolymerElement {
           display: block;
         }
 
+        img {
+            height: 54px;
+            width: auto;
+            border: 3px solid white;
+            border-radius: 50%;
+        }
+
+        .fullname {
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 16px;
+            text-transform: none;
+        }
+
         a {
             display: block;
             text-decoration: none;
@@ -71,21 +85,31 @@ class MyNavigation extends PolymerElement {
           --iron-icon-fill-color: var(--app-accent-color);
         }
 
+        .info {
+            height: 98px;
+        }
+
       </style>
 
       <template is="dom-if" if="[[showMenu]]">
           <iron-selector selected="[[currentPage]]" attr-for-selected="name" class="drawer-list" role="navigation">
             <template is="dom-if" if="[[showPrevious]]">
                 <div class="backmenu">
-                    <a name="[[previousPage]]" href="[[rootPath]][[previousPage]]">
+                    <a name="[[prevPage]]" href="[[rootPath]][[prevPage]]">
                         <iron-icon icon="ithings-icons:arrow-back"></iron-icon>
                         [[previousLabel]]
                     </a>
                 </div>
             </template>
             <div class="mainmenu">
+                <template is="dom-if" if="[[showProfile]]">
+                    <a href="/" class="layout horizontal center info">
+                        <img src="https://dummyimage.com/60x60/2f3042/2f3042">
+                        <div class="fullname flex">[[name]]</div>
+                    </a>
+                </template>
                 <template is="dom-repeat" items="[[currentNavigation]]">
-                    <a name="[[item.page]]" href="[[rootPath]][[item.page]]">
+                    <a name="[[item.page]]" href="[[rootPath]][[item.page]][[_getQueryParms(item.parms)]]">
                         <iron-icon icon="ithings-icons:[[item.icon]]"></iron-icon>
                         [[item.label]]
                     </a>
@@ -106,7 +130,14 @@ class MyNavigation extends PolymerElement {
 
   static get properties() {
       return {
-        previousPage: {
+        showProfile: {
+            type: Boolean,
+            value: false
+        },
+        name: {
+            type: String
+        },
+        prevPage: {
             type: String,
             value: "serviceusers"
         },
@@ -159,10 +190,10 @@ class MyNavigation extends PolymerElement {
             type: Object,
             value: { 
                 "SERVICE USER": [ 
-                    { label: "GENERAL DETAILS", page: "subscribergeneral" }, 
-                    { label: "MANAGE EVENTS", page: "manageevents" }, 
-                    { label: "MANAGE DEVICES", page: "managedevices" }, 
-                    { label: "MANAGE CAREGIVERS", page: "managecaretakers" }
+                    { label: "GENERAL DETAILS", page: "subscribergeneral", icon: "edit-patient", parms: ["email", "name"] }, 
+                    { label: "MANAGE EVENTS", page: "manageevents", icon: "manage-events", parms: ["email", "name"] }, 
+                    { label: "MANAGE DEVICES", page: "managedevices", icon: "manage-devices", parms: ["email", "name"]}, 
+                    { label: "MANAGE CAREGIVERS", page: "managecaretakers", icon: "manage-categories", parms: ["email", "name"]}
                 ],
                 "CARE HOME": [ 
                     { label: "GENERAL DETAILS", page: "carehomegeneral" }, 
@@ -180,7 +211,16 @@ class MyNavigation extends PolymerElement {
             value: true
         },
         roleName: {
-            type: String
+            type: String,
+            observer: "_changeNavigation"
+        },
+        previousPage: {
+            type: Object,
+            value: {}
+        },
+        subRoute: {
+            type: Object,
+            observer: "_changeNavigation"
         }
       };
   }
@@ -197,6 +237,12 @@ class MyNavigation extends PolymerElement {
       this.pageNavigation['carehomegeneral'] = this.secondlevel["CARE HOME"];
       this.pageNavigation['manageevents'] = this.secondlevel["CARE HOME"];
       this.pageNavigation['managedevices'] = this.secondlevel["CARE HOME"];
+
+      this.previousPage['subscribergeneral'] = { page: "serviceusers", label: "Service Users" };
+      this.previousPage['manageevents'] = { page: "serviceusers", label: "Service Users" };
+      this.previousPage['manageddevices'] = { page: "serviceusers", label: "Service Users" };
+      this.previousPage['managecaretakers'] = { page: "serviceusers", label: "Service Users" };
+
   }
 
   _changeNavigation(page) {
@@ -215,6 +261,36 @@ class MyNavigation extends PolymerElement {
           }
           this.currentNavigation = this.firstlevel[role];
       }
+
+      this.name = this.subRoute.__queryParams["name"];
+      if (this.name != undefined) {
+          this.showProfile = true;
+      } else {
+          this.showProfile = false;
+      }
+
+      var previous = this.previousPage[this.currentPage];
+      if (previous != undefined) {
+          this.showPrevious = true;
+          this.previousLabel = previous.label;
+          this.prevPage = previous.page;
+      } else {
+          this.showPrevious = false;
+          this.previousLabel = "";
+          this.prevPage = "";
+      }
+  }
+
+  _getQueryParms(parms) {
+      var query = "";
+      if (parms != undefined) {
+          query = "?";
+          for (var i = 0; i < parms.length; i++) {
+              query += parms[i] + "=" + this.subRoute.__queryParams[parms[i]];
+          }
+      }
+
+      return query;
   }
 }
 

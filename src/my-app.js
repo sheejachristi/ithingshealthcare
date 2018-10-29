@@ -31,6 +31,7 @@ import './my-cookies.js';
 import './my-providerdetails.js';
 import './my-providerusers.js';
 import './my-serviceusers.js';
+import './my-subscribergeneral.js';
 import './api/securityflow-validatesession.js';
 import './api/telehealthcareflow-lookup.js';
 
@@ -91,7 +92,6 @@ class MyApp extends PolymerElement {
             margin: 26px 40px 0px 40px;
             box-sizing: border-box;
             height: 100%;
-            background-color: #ECF2F6;
         }
 
         iron-pages {
@@ -123,7 +123,7 @@ class MyApp extends PolymerElement {
         <!-- Drawer content -->
         <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
           <app-toolbar><img id="header-logo" src="./src/images/ithings-logo.png" alt="iThings Health"></app-toolbar>
-          <my-navigation role-name="[[role]]" current-page="[[currentPage]]" rootPath="[[rootPath]]"></my-navigation>
+          <my-navigation sub-route="[[subroute]]" role-name="[[role]]" current-page="[[currentPage]]" rootPath="[[rootPath]]"></my-navigation>
           </iron-selector>
         </app-drawer>
 
@@ -144,7 +144,8 @@ class MyApp extends PolymerElement {
                 <my-login id="login" name="login" on-login-success="_loggedIn"></my-login>
                 <my-providerdetails id="providerdetails" name="providerdetails"></my-providerdetails>
                 <my-providerusers id="providerusers" name="providerusers"></my-providerusers>
-                <my-serviceusers id="serviceusers" name="serviceusers"></my-serviceusers>
+                <my-serviceusers id="serviceusers" name="serviceusers" on-change-page="_changePage"></my-serviceusers>
+                <my-subscribergeneral id="subscribergeneral" name="subscribergeneral"></my-subscribergeneral>
                 <my-view1 name="view1"></my-view1>
                 <my-view2 name="view2"></my-view2>
                 <my-view3 name="view3"></my-view3>
@@ -170,7 +171,8 @@ class MyApp extends PolymerElement {
           type: String,
       },
       role: {
-          type: String
+          type: String,
+          reflectToAttribute: true
       },
       currentPage: {
           type: String,
@@ -197,6 +199,9 @@ class MyApp extends PolymerElement {
       profile: {
           type: Object,
           value: {}
+      },
+      activedata: {
+          type: String
       }
     };
   }
@@ -236,7 +241,7 @@ class MyApp extends PolymerElement {
 
     if (!page) {
       this.page = 'login';
-    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails', 'providerusers', 'serviceusers'].indexOf(page) !== -1) {
+    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails', 'providerusers', 'serviceusers', 'subscribergeneral'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -255,15 +260,6 @@ class MyApp extends PolymerElement {
     // statement, so break it up.
     this.currentPage = page;
     switch (page) {
-      case 'serviceusers':
-          this.$.serviceusers.loadData();
-          break;
-      case 'providerusers':
-          this.$.providerusers.loadData();
-          break;
-      case 'providerdetails':
-        this.$.providerdetails.loadData();
-        break;
       case 'login':
         import('./my-login.js');
         break;
@@ -278,6 +274,33 @@ class MyApp extends PolymerElement {
         break;
       case 'view404':
         import('./my-view404.js');
+        break;
+    }
+
+    if (this.validSession) {
+        this._loadData(page);
+    }
+  }
+
+  _loadData(page) {
+    switch (page) {
+      case 'subscribergeneral':
+          this.activedata = this.subroute.__queryParams.email;
+          if (this.activedata != undefined) {
+              this.$.subscribergeneral.loadData(this.activedata);
+          } else {
+              this.page = "serviceusers";
+          }
+
+          break;
+      case 'serviceusers':
+          this.$.serviceusers.loadData();
+          break;
+      case 'providerusers':
+          this.$.providerusers.loadData();
+          break;
+      case 'providerdetails':
+        this.$.providerdetails.loadData();
         break;
     }
   }
@@ -303,6 +326,7 @@ class MyApp extends PolymerElement {
       });
 
       this._getProfile();
+      this._loadData(page);
   }
 
   _setupProfile(event) {
@@ -333,7 +357,14 @@ class MyApp extends PolymerElement {
 
       this.$.cookies.resetCookie();
       this.profileName = "";
-      this.page = "login";
+      window.location =  window.location.protocol + "//" + window.location.host + this.rootPath;
+  }
+
+  _changePage(event) {
+      this.activedata = event.detail.activedata;
+      //this.page = event.detail.activepage;
+      //this.set('route.path', "/" + event.detail.activepage + "?email=" + event.detail.activedata);
+      window.location =  window.location.protocol + "//" + window.location.host + (this.rootPath + event.detail.activepage + "?" + event.detail.activedata);
   }
 }
 

@@ -62,7 +62,7 @@ class MyServiceUsers extends PolymerElement {
       </style>
       <search-view search-query="{{searchQuery}}" mode="{{_mode}}" title="Service User" on-open-createnew="_openCreateNew" on-search-changed="_triggerSearch"></search-view> 
       <search-listview class="search-result" columns="[[columns]]"
-        search-result="{{searchResult}}" mode="{{_mode}}"></search-listview>
+        search-result="{{searchResult}}" mode="{{_mode}}" on-action-edit="_showDetails"></search-listview>
       <telehealthcareflow-searchsubscribers id="searchsubscribers" on-subscriber-result="_setupResult"></telehealthcareflow-searchsubscribers>
       <subscriber-add id="addsubscriber" on-serviceuser-created="_serviceUserEdit"></subscriber-add>
     `;
@@ -126,6 +126,11 @@ class MyServiceUsers extends PolymerElement {
       this._triggerSearch();
       var email = event.detail.email;
       console.log(email);
+  }
+
+  _showDetails(event) {
+      var subscriber = event.detail.data;
+      this.dispatchEvent(new CustomEvent("change-page", { detail: { activepage: "subscribergeneral", activedata: "email=" + subscriber.email + "&name=" + subscriber.name }}));
   }
 }
 

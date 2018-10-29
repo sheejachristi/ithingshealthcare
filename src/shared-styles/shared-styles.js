@@ -82,6 +82,12 @@ $_documentContainer.innerHTML = `<dom-module id="shared-styles">
         font-family: 'Roboto-Regular';
         padding-top: 20px;
     }
+    .readonlylabel {
+        font-size: 18px;
+        color: #2f3042;
+        font-family: 'Roboto-Regular';
+        padding-top: 10px;
+    }
 
     .content-title h2 {
         font-size: 24px;

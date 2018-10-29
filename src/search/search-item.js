@@ -107,9 +107,9 @@ class SearchItem extends PolymerElement {
     }
   }
 
-  _dispathAction(event) {
+  _dispatchAction(event) {
       var name = event.model.action.id;
-      this.dispatchEvent(new CustomEvent('action-' + name, { detail: { id: this.template.id }}));
+      this.dispatchEvent(new CustomEvent('action-item', { detail: { data: this.template, action: name }}));
   }
 
   _getValue(name) {
