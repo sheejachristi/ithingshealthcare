@@ -15,6 +15,7 @@ import './shared-styles/input-styles.js';
 import './shared-styles/paper-button-styles.js';
 import './api/telehealthcareflow-getsubscriberdetails.js';
 import './search/search-listview.js';
+import './dialogs/device-add.js'
 
 class MyManageDevices extends PolymerElement {
   static get template() {
@@ -54,6 +55,7 @@ class MyManageDevices extends PolymerElement {
           <paper-button class="filledWhite" on-click="_loginNow">SAVE</paper-button>
       </div>
       <telehealthcareflow-getsubscriberdetails id="getdetails" on-subscriber-details="_setupSubscriber"></telehealthcareflow-getsubscriberdetails>
+      <device-add id="addDevice" on-registered-device="reloadData" subscriber="[[subscriber.email]]"></device-add>
     `;
   }
 
@@ -84,6 +86,14 @@ class MyManageDevices extends PolymerElement {
 
   _showError(event) {
       console.log(event.detail.error);
+  }
+
+  _openAddEditDialog() {
+      this.$.addDevice.open();
+  }
+
+  reloadData() {
+      this.loadData(this.email);
   }
 
   loadData(email) {
