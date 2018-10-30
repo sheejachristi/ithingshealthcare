@@ -198,7 +198,7 @@ class MyNavigation extends PolymerElement {
                 "CARE HOME": [ 
                     { label: "GENERAL DETAILS", page: "carehomegeneral" }, 
                     { label: "MANAGE EVENTS", page: "manageevents" }, 
-                    { label: "MANAGE DEVICES", page: "managedevices" }
+                    { label: "MANAGE DEVICES", page: "managehomedevices" }
                 ]
             }
         },
@@ -236,11 +236,11 @@ class MyNavigation extends PolymerElement {
 
       this.pageNavigation['carehomegeneral'] = this.secondlevel["CARE HOME"];
       this.pageNavigation['manageevents'] = this.secondlevel["CARE HOME"];
-      this.pageNavigation['managedevices'] = this.secondlevel["CARE HOME"];
+      this.pageNavigation['managehomedevices'] = this.secondlevel["CARE HOME"];
 
       this.previousPage['subscribergeneral'] = { page: "serviceusers", label: "Service Users" };
       this.previousPage['manageevents'] = { page: "serviceusers", label: "Service Users" };
-      this.previousPage['manageddevices'] = { page: "serviceusers", label: "Service Users" };
+      this.previousPage['managedevices'] = { page: "serviceusers", label: "Service Users" };
       this.previousPage['managecaretakers'] = { page: "serviceusers", label: "Service Users" };
 
   }
@@ -286,7 +286,7 @@ class MyNavigation extends PolymerElement {
       if (parms != undefined) {
           query = "?";
           for (var i = 0; i < parms.length; i++) {
-              query += parms[i] + "=" + this.subRoute.__queryParams[parms[i]];
+              query += parms[i] + "=" + this.subRoute.__queryParams[parms[i]] + "&";
           }
       }
 

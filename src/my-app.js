@@ -32,6 +32,8 @@ import './my-providerdetails.js';
 import './my-providerusers.js';
 import './my-serviceusers.js';
 import './my-subscribergeneral.js';
+import './my-managecaretakers.js';
+import './my-managedevices.js';
 import './api/securityflow-validatesession.js';
 import './api/telehealthcareflow-lookup.js';
 
@@ -146,6 +148,8 @@ class MyApp extends PolymerElement {
                 <my-providerusers id="providerusers" name="providerusers"></my-providerusers>
                 <my-serviceusers id="serviceusers" name="serviceusers" on-change-page="_changePage"></my-serviceusers>
                 <my-subscribergeneral id="subscribergeneral" name="subscribergeneral"></my-subscribergeneral>
+                <my-managecaretakers id="managecaretakers" name="managecaretakers"></my-managecaretakers>
+                <my-managedevices id="managedevices" name="managedevices"></my-amanagedevices>
                 <my-view1 name="view1"></my-view1>
                 <my-view2 name="view2"></my-view2>
                 <my-view3 name="view3"></my-view3>
@@ -241,7 +245,7 @@ class MyApp extends PolymerElement {
 
     if (!page) {
       this.page = 'login';
-    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails', 'providerusers', 'serviceusers', 'subscribergeneral'].indexOf(page) !== -1) {
+    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails', 'providerusers', 'serviceusers', 'subscribergeneral', 'managecaretakers', 'managedevices'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -284,6 +288,24 @@ class MyApp extends PolymerElement {
 
   _loadData(page) {
     switch (page) {
+      case 'managedevices':
+          this.activedata = this.subroute.__queryParams.email;
+          if (this.activedata != undefined) {
+              this.$.managedevices.loadData(this.activedata);
+          } else {
+              this.page = "serviceusers";
+          }
+
+          break;
+      case 'managecaretakers':
+          this.activedata = this.subroute.__queryParams.email;
+          if (this.activedata != undefined) {
+              this.$.managecaretakers.loadData(this.activedata);
+          } else {
+              this.page = "serviceusers";
+          }
+
+          break;
       case 'subscribergeneral':
           this.activedata = this.subroute.__queryParams.email;
           if (this.activedata != undefined) {
