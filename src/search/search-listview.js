@@ -137,6 +137,7 @@ class SearchListView extends PolymerElement {
         <template is="dom-repeat" items="[[searchResult]]" observe="#">
             <search-item template="[[item]]" class="event-row"
                   columns="[[columns]]"
+                  actions="[[actions]]"
                   on-action-item="_doAction">
             </search-item>
         </template>      
@@ -148,6 +149,12 @@ class SearchListView extends PolymerElement {
 
   static get properties() {
     return {
+      actions: {
+          type: Array,
+          value: [
+          { id: 'edit', label: '+ EDIT' }
+          ]
+      },
       columns: {
           type: Array
       },

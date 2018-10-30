@@ -52,7 +52,7 @@ class SearchView extends (GestureEventListeners(PolymerElement)) {
           padding: 15px 46px;
           z-index: 1;
         }
-        :host([_active]) .search-container {
+        :host([active]) .search-container {
           background: var( --light-theme-background-color);
           box-shadow:  0px -3px 0px rgba(47, 48, 66, 0.15);
         }
@@ -140,7 +140,7 @@ class SearchView extends (GestureEventListeners(PolymerElement)) {
         </div> 
         <div class="end layout vertical paper-button-container">
            <paper-button class="filledBlue add-tmp" on-tap="_showCreate">create new [[title]]</paper-button>
-           <paper-icon-button icon="icons:close" class$="[[_screenSize]] close-icon search-remove-icon" on-tap="_reset" hidden="[[_hideCloseIcon(mode,_searchResult)]]"></paper-icon-button>
+           <paper-icon-button icon="icons:close" class$="[[_screenSize]] close-icon search-remove-icon" on-tap="_reset" hidden="[[_hideClose]]"></paper-icon-button>
         </div>
       </div>
     `;
@@ -165,24 +165,40 @@ class SearchView extends (GestureEventListeners(PolymerElement)) {
         type: Array
       },
 
-      _active: {
+      active: {
         type: Boolean,
         reflectToAttribute: true,
         value: true,
         notify: true,
+        observer: "_hideCloseIcon"
       },
       _searchInProgress: {
         type: Boolean,
         value: false
       },
+      enableClose: {
+          type: Boolean,
+          value: false
+      },
+      _hideClose: {
+          type: Boolean,
+          value: true
+      }
     };
   }
 
   _hideCloseIcon(){
-    if(this.mode === 'NORMAL' && this._searchResult){
+    if (!this.enableClose) {
+        this._hideClose = true;
+        return true;
+    }
+
+    if(this.mode === 'NORMAL' && this.active){
+      this._hideClose = false;
       return false;
     }
 
+    this._hideClose = true;
     return true;
   }
   
@@ -203,12 +219,14 @@ class SearchView extends (GestureEventListeners(PolymerElement)) {
 
   _search(noDelay){
       this.searchQuery = this.$.search.value;
+      this.active = true;
       this.dispatchEvent(new CustomEvent("search-changed", { detail: { search: this.searchQuery }}));
   }
 
   _reset() {
     this.mode = "NORMAL";
-    store.dispatch(reset());
+    this.active = false;
+    this.dispatchEvent(new CustomEvent("close-listview", { detail: { "closed": "true" }}));
   }
 
   _showCreate() {

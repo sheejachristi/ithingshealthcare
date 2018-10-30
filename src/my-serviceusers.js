@@ -36,9 +36,6 @@ class MyServiceUsers extends PolymerElement {
           padding: 92px 24px 34px 24px;
           margin: -60px 40px 40px 40px;
         }
-        :host .event-templates-list{
-          display: none;
-        }
         :host([_screen-size='small']){
            overflow: auto;
         }

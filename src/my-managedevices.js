@@ -34,7 +34,7 @@ class MyManageDevices extends PolymerElement {
       </style>
 
       <div class="content-title">
-        <h2>Edit Service User Details</h2>
+        <h2>Add/Edit Devices</h2>
       </div>
       <div class="card-header">
         <div class="flex-1 event-title self-end">User Devices</div>

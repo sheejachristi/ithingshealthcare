@@ -89,6 +89,10 @@ $_documentContainer.innerHTML = `<dom-module id="shared-styles">
         padding-top: 10px;
     }
 
+    .content-title {
+        background-color: #fff;
+    }
+
     .content-title h2 {
         font-size: 24px;
         color: #11367A;
