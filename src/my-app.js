@@ -385,8 +385,9 @@ class MyApp extends PolymerElement {
   _changePage(event) {
       this.activedata = event.detail.activedata;
       //this.page = event.detail.activepage;
-      //this.set('route.path', "/" + event.detail.activepage + "?email=" + event.detail.activedata);
-      window.location =  window.location.protocol + "//" + window.location.host + (this.rootPath + event.detail.activepage + "?" + event.detail.activedata);
+      this.set("route.__queryParams",  event.detail.activedata );
+      this.set('route.path', "/" + event.detail.activepage);
+      //window.location =  window.location.protocol + "//" + window.location.host + (this.rootPath + event.detail.activepage + "?" + event.detail.activedata);
   }
 }
 

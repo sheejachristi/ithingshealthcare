@@ -127,7 +127,7 @@ class MyServiceUsers extends PolymerElement {
 
   _showDetails(event) {
       var subscriber = event.detail.data;
-      this.dispatchEvent(new CustomEvent("change-page", { detail: { activepage: "subscribergeneral", activedata: "email=" + subscriber.email + "&name=" + subscriber.name }}));
+      this.dispatchEvent(new CustomEvent("change-page", { detail: { activepage: "subscribergeneral", activedata: { "email" : subscriber.email , "name" : subscriber.name } }}));
   }
 }
 

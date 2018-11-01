@@ -1,8 +1,26 @@
 {
   "entrypoint": "index.html",
   "shell": "src/my-app.js",
+  "fragments":[
+      "src/my-login.js",
+      "src/my-navigation.js",
+      "src/my-serviceusers.js",
+      "src/my-view2.js",
+      "src/my-cookies.js",
+      "src/my-managecaretakers.js",
+      "src/my-providerdetails.js",
+      "src/my-subscribergeneral.js",
+      "src/my-view3.js",
+      "src/my-icons.js",
+      "src/my-managedevices.js",
+      "src/my-providerusers.js",
+      "src/my-view1.js",
+      "src/my-view404.js"
+  ],
   "sources": [
-    "images/**/*"
+    "src/images/**/*",
+    "src/fonts/**/*",
+    "src/icons/**/*"
   ],
   "extraDependencies": [
     "manifest.json",
@@ -26,7 +44,7 @@
       "html": {
         "minify": true
       },
-      "bundle": true,
+      "bundle": false,
       "addServiceWorker": true
     },
     {
@@ -44,7 +62,7 @@
       "html": {
         "minify": true
       },
-      "bundle": true,
+      "bundle": false,
       "addServiceWorker": true
     },
     {
@@ -60,7 +78,7 @@
       "html": {
         "minify": true
       },
-      "bundle": true,
+      "bundle": false,
       "addServiceWorker": true
     }
   ],
