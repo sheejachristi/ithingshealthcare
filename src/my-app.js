@@ -33,6 +33,7 @@ import './my-providerusers.js';
 import './my-serviceusers.js';
 import './my-subscribergeneral.js';
 import './my-managecaretakers.js';
+import './components/manage-events-page.js';
 import './my-managedevices.js';
 import './api/securityflow-validatesession.js';
 import './api/telehealthcareflow-lookup.js';
@@ -113,7 +114,7 @@ class MyApp extends PolymerElement {
       <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
       </app-location>
 
-      <smart-config id="globals" server="192.168.1.34" port="8045" tenant="sptest"></smart-config>
+      <smart-config id="globals" server="192.168.1.33" port="8045" tenant="sptest"></smart-config>
       <my-cookies id="cookies" user-Id="{{userId}}" session-id="{{sessionId}}"></my-cookies>
       <securityflow-validatesession id="validatesess"></securityflow-validatesession>
       <telehealthcareflow-lookup id="lookup" on-lookup-success="_setupProfile"></telehealthcareflow-lookup>
@@ -149,7 +150,8 @@ class MyApp extends PolymerElement {
                 <my-serviceusers id="serviceusers" name="serviceusers" on-change-page="_changePage"></my-serviceusers>
                 <my-subscribergeneral id="subscribergeneral" name="subscribergeneral"></my-subscribergeneral>
                 <my-managecaretakers id="managecaretakers" name="managecaretakers"></my-managecaretakers>
-                <my-managedevices id="managedevices" name="managedevices"></my-amanagedevices>
+                <my-managedevices id="managedevices" name="managedevices"></my-managedevices>
+                <manage-events-page id="manageevents" name="manageevents"></manage-events-page>
                 <my-view1 name="view1"></my-view1>
                 <my-view2 name="view2"></my-view2>
                 <my-view3 name="view3"></my-view3>
@@ -245,7 +247,7 @@ class MyApp extends PolymerElement {
 
     if (!page) {
       this.page = 'login';
-    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails', 'providerusers', 'serviceusers', 'subscribergeneral', 'managecaretakers', 'managedevices'].indexOf(page) !== -1) {
+    } else if (['view1', 'view2', 'view3', 'login', 'providerdetails', 'providerusers', 'serviceusers', 'subscribergeneral', 'managecaretakers', 'managedevices', 'manageevents'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -288,6 +290,14 @@ class MyApp extends PolymerElement {
 
   _loadData(page) {
     switch (page) {
+      case 'manageevents':
+          this.activedata = this.subroute.__queryParams.email;
+          if (this.activedata != undefined) {
+              this.$.manageevents.loadData(this.activedata);
+          } else {
+              this.page = "serviceusers";
+          }
+          break;
       case 'managedevices':
           this.activedata = this.subroute.__queryParams.email;
           if (this.activedata != undefined) {

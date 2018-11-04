@@ -20,7 +20,7 @@ import '@polymer/iron-input/iron-input';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-listbox/paper-listbox';
-import '../../../shared-styles/paper-menu-button-styles';
+import '../../shared-styles/paper-menu-button-styles';
 
 /**
 * @customElement

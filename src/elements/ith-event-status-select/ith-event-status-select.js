@@ -1,9 +1,9 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element';
-import  '@polymer/iron-flex-layout/iron-flex-layout-classes';
-import  '@vaadin/vaadin-dropdown-menu/vaadin-dropdown-menu';
-import  '@vaadin/vaadin-item/vaadin-item';
-import  '@vaadin/vaadin-list-box/vaadin-list-box';
-import '../../../shared-styles/vaadin-dropdown-menu-styles';
+import  '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import  '@vaadin/vaadin-dropdown-menu/vaadin-dropdown-menu.js';
+import  '@vaadin/vaadin-item/vaadin-item.js';
+import  '@vaadin/vaadin-list-box/vaadin-list-box.js';
+import '../../shared-styles/vaadin-dropdown-menu-styles.js';
 
 class IthEventStatusSelect extends PolymerElement {
   static get template() {

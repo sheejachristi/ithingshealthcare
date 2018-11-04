@@ -1,9 +1,9 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element';
 import  '@polymer/iron-flex-layout/iron-flex-layout-classes';
-import  '@vaadin/vaadin-dropdown-menu/vaadin-dropdown-menu';
-import  '@vaadin/vaadin-item/vaadin-item';
-import  '@vaadin/vaadin-list-box/vaadin-list-box';
-import '../../../shared-styles/vaadin-dropdown-menu-styles';
+import  '@vaadin/vaadin-dropdown-menu/vaadin-dropdown-menu.js';
+import  '@vaadin/vaadin-item/vaadin-item.js';
+import  '@vaadin/vaadin-list-box/vaadin-list-box.js';
+import '../../shared-styles/vaadin-dropdown-menu-styles';
 import {mixinBehaviors} from '@polymer/polymer/lib/legacy/class.js';
 import {IronFormElementBehavior} from '@polymer/iron-form-element-behavior/iron-form-element-behavior';
 

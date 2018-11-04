@@ -197,7 +197,7 @@ class MyNavigation extends PolymerElement {
                 ],
                 "CARE HOME": [ 
                     { label: "GENERAL DETAILS", page: "carehomegeneral" }, 
-                    { label: "MANAGE EVENTS", page: "manageevents" }, 
+                    { label: "MANAGE EVENTS", page: "managehomeevents" }, 
                     { label: "MANAGE DEVICES", page: "managehomedevices" }
                 ]
             }
@@ -235,7 +235,7 @@ class MyNavigation extends PolymerElement {
       this.pageNavigation['managecaretakers'] = this.secondlevel["SERVICE USER"];
 
       this.pageNavigation['carehomegeneral'] = this.secondlevel["CARE HOME"];
-      this.pageNavigation['manageevents'] = this.secondlevel["CARE HOME"];
+      this.pageNavigation['managehomeevents'] = this.secondlevel["CARE HOME"];
       this.pageNavigation['managehomedevices'] = this.secondlevel["CARE HOME"];
 
       this.previousPage['subscribergeneral'] = { page: "serviceusers", label: "Service Users" };
