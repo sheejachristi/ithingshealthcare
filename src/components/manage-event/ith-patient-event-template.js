@@ -51,6 +51,7 @@ class IthPatientEventTemplate extends (PolymerElement) {
               <template is="dom-repeat" items="[[eventTemplate.details]]">
                 <ith-patient-event-settings 
                   name="events"
+                  action="[[eventTemplate.action]]"
                   workflow-templates="[[_workflowTemplates]]" 
                   forward-to-system="[[_forwardToSystem]]" 
                   event="[[item]]"

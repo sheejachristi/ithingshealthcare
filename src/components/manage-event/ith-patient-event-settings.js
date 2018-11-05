@@ -4,13 +4,14 @@ import  '@polymer/iron-form/iron-form';
 import '../../elements/ith-dropdown-menu/ith-dropdown-menu.js';
 import '../../elements/ith-recipients-settings/ith-recipients-settings.js';
 import '../../shared-styles/shared-styles';
+import '../../shared-styles/input-styles';
 import {mixinBehaviors} from '@polymer/polymer/lib/legacy/class.js';
 import {IronFormElementBehavior} from '@polymer/iron-form-element-behavior/iron-form-element-behavior';
 
 class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], PolymerElement) {
   static get template() {
     return html`
-      <style include="iron-flex iron-flex-factors iron-flex-alignment shared-styles">
+      <style include="iron-flex iron-flex-factors iron-flex-alignment shared-styles input-styles">
         :host {
           display: block;
         }
@@ -74,16 +75,16 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
           <form id="form">
             <div class="layout horizontal list-container">
               <ith-dropdown-menu class="border cell-content flex-1" 
-                value="{{_timePeriod}}" 
-                name="timePeriod"
-                label="Time Period/Duration" 
+                value="{{_getLabel(event.timeType)}}" 
+                name="timeType"
+                label="[[_getLabel(event.timeType)]]" 
                 items="[[_timePeriodLabel]]"
                 on-value-changed="_setValue">
               </ith-dropdown-menu>
               <div class="flex-3 layout horizontal cell-content time-period-container">
                 <ith-dropdown-menu 
-                    hidden$="[[!_hideTimePeriodDropDown]]" 
-                    value="[[event.eventTrigger.timeFrom]]"
+                    hidden$="[[!_eq(event.timeType, 'TimePeriod')]]" 
+                    value="[[event.betweenTime.startTime]]"
                     name="timeFrom"
                     class="drop-down from-drop-down flex-1" 
                     placeholder="From"  
@@ -92,8 +93,8 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
                     on-value-changed="_setValue">
                 </ith-dropdown-menu>
                 <ith-dropdown-menu 
-                  value="[[event.eventTrigger.timeTo]]" 
-                  hidden$="[[!_hideTimePeriodDropDown]]" 
+                  value="[[event.betweenTime.endTime]]" 
+                  hidden$="[[!_eq(event.timeType, 'TimePeriod')]]" 
                   class="flex-1 time-period-dropdown" 
                   placeholder="To"  
                   name="timeTo"
@@ -102,13 +103,23 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
                   on-value-changed="_setValue">
                 </ith-dropdown-menu>
                 <ith-dropdown-menu 
-                  hidden$="[[_hideTimePeriodDropDown]]" 
+                  hidden$="[[!_eq(event.timeType, 'WithinPrevious')]]" 
                   class="flex-1 drop-down time-period-dropdown" 
-                  placeholder="Duration"
-                  value="[[event.eventTrigger.duration]]"
+                  placeholder="Duration (mins)"
+                  value="[[event.duration.duration]]"
                   name="duration"
                   label="Duration" 
                   items="[[_durations]]"
+                  on-value-changed="_setValue">
+                </ith-dropdown-menu>
+                <ith-dropdown-menu 
+                  hidden$="[[!_eq(event.timeType, 'AtTime')]]" 
+                  class="flex-1 drop-down time-period-dropdown" 
+                  placeholder="Time"
+                  value="[[_getTime(event.time.time)]]"
+                  name="time"
+                  label="Time" 
+                  items="[[_timePeriods]]"
                   on-value-changed="_setValue">
                 </ith-dropdown-menu>
                   <div class="flex-1" hidden$="[[_hideTimePeriodDropDown]]"></div>
@@ -116,24 +127,21 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
               </div>
             </div>
             <div class="layout horizontal list-container">
-              <ith-dropdown-menu 
-                class="border cell-content flex-1" 
-                value-is-object 
-                label="Sensor event" 
-                items="[[sensors]]"
-                name="sensorEvent"
-                value="[[event.eventTrigger.sensorEvent.id]]"
+              <ith-dropdown-menu class="border cell-content flex-1" 
+                value="{{event.tag}}" 
+                name="tag"
+                label="Sensor used" 
+                items="[[_sensors]]"
                 on-value-changed="_setValue">
               </ith-dropdown-menu>
               <div class="flex-3 layout horizontal cell-content">
-                <ith-dropdown-menu  
-                  class="drop-down flex-1" 
-                  placeholder="Within"  
-                  label="Within" 
-                  name="frequency"
-                  items="[[_durations]]"
-                  value="[[event.eventTrigger.frequency]]"
-                  on-value-changed="_setValue">
+                <ith-dropdown-menu 
+                    value="[[event.deviceId]]"
+                    name="device"
+                    class="drop-down flex-1" 
+                    placeholder="Device"  
+                    items="[[_devices]]"
+                    label="Device Used" >
                 </ith-dropdown-menu>
                 <div class="flex-1"></div>
                 <div class="flex-2"></div>
@@ -141,7 +149,7 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
             </div>
             <div class="layout horizontal list-container">
               <ith-dropdown-menu 
-                value="{{_alertType}}" 
+                value="{{action.actionType}}" 
                 class="border cell-content flex-1" 
                 label="Alert type" 
                 name="alertType"
@@ -152,15 +160,15 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
                 <div class="flex-1 recipient-container" hidden="[[!_eq(_alertTypeDropDowm, 'Notification')]]">
                   <div class="dropdown-title">Recipents</div>
                   <ith-recipients-settings
-                    items="[[recipents]]" 
+                    items="[[recipients]]" 
                     name="recipients"
-                    input-value="[[event.eventAlert.recipients]]">
+                    input-value="[[event.action.recipient]]">
                   </ith-recipients-settings>
                 </div>
               <ith-dropdown-menu 
                 class="drop-down flex-1" 
-                hidden="[[!_eq(_alertTypeDropDowm, 'Workflow')]]"
-                value="[[event.eventAlert.workflow]]"
+                hidden="[[!_eq(action.actionType, 'Workflow')]]"
+                value="[[action.workflow]]"
                 placeholder="Workflow template"  
                 label="Workflow template" 
                 name="workflow"
@@ -169,15 +177,26 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
               </ith-dropdown-menu>
               <ith-dropdown-menu 
                 class="drop-down flex-1" 
-                hidden="[[!_eq(_alertTypeDropDowm, 'System')]]"
-                value="[[event.eventAlert.forwardToSystem]]"
-                placeholder="Forward to another system"  
-                label="Forward to another system"
-                name="forwardToSystem"
-                items="[[forwardToSystem]]"
+                hidden="[[!_eq(action.actionType, 'Notification')]]"
+                value="[[action.recipient]]"
+                placeholder="Recipient"  
+                label="Recipient" 
+                name="recipient"
+                items="[[recipients]]"
                 on-value-changed="_setValue">
               </ith-dropdown-menu>
-              <div class="flex-1"></div>
+              <div class="flex-1">
+                  <ith-dropdown-menu 
+                    class="drop-down flex-1" 
+                    hidden="[[!_eq(action.actionType, 'Notification')]]"
+                    value="[[action.dType]]"
+                    placeholder="Delivery Type"  
+                    label="Notify via" 
+                    name="dtype"
+                    items="[[ntypes]]"
+                    on-value-changed="_setValue">
+                  </ith-dropdown-menu>
+              </div>
               <div class="flex-2"></div>
             </div>
           </form>
@@ -188,7 +207,21 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
 
   static get properties() {
     return {
-      event: Object,
+      event: { 
+          type: Object,
+          observer: "_dataChanged"
+      },
+      action: {
+          type: Object
+      },
+      _sensors: {
+          type: Array,
+          value: []
+      },
+      _devices: {
+          type: Array,
+          value: []
+      },
       
       _timePeriods: {
         type: Array,
@@ -200,7 +233,11 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
         }
       },
 
-      recipents: Array,
+      recipients: Array,
+      ntypes: {
+          type: Array,
+          value: [ 'email', 'sms' ]
+      },
       workflowTemplates: Array,
       forwardToSystem: Array,
 
@@ -214,7 +251,7 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
       _alertTypes: {
         type: Array,
         value: function(){
-          return ['Notification', 'Workflow', 'Forward to another system']
+          return ['Notification', 'Workflow']
         }
       },
 
@@ -259,7 +296,7 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
     var number = [];
 
     for(var i=0;i<=60;i++){
-      number.push(i + ' mins')
+      number.push(i);
     }
     
     this.set('_durations', number);
@@ -304,6 +341,45 @@ class IthPatientEventSettings extends mixinBehaviors([IronFormElementBehavior], 
   }
 
     this.set('_alertTypeDropDowm', 'System');
+  }
+
+  _dataChanged() {
+      var sensors = [];
+      sensors.push(this.event.tag);
+      this._sensors = sensors;
+
+      var devices = [];
+      devices.push(this.event.deviceId);
+      this._devices = devices;
+
+      var recps = [];
+      if (this.action != undefined) {
+          recps.push(this.action.recipient);
+          this.recipients = recps;
+      }
+
+      var timePeriod = [];
+      timePeriod.push(this._getLabel(this.event.timeType));
+      this._timePeriodLabel = timePeriod;
+  }
+
+  _getLabel(type) {
+      if (type == 'WithinPrevious') {
+          return "Within";
+      } else if (type == 'AtTime') {
+          return "Time";
+      } else if (type == 'TimePeriod') {
+          return "Time Period";
+      }
+
+      return type;
+  }
+
+  _getTime(dt) {
+      var odt = new Date(dt);
+      //odt.setTime(dt);
+
+      return odt.getHours() + ":" + odt.getMinutes();
   }
 }
 
