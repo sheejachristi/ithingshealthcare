@@ -19,7 +19,7 @@ class IthAddTemplateListView extends PolymerElement {
         }
       </style>
       <div class="layout horizontal add-template-header center">
-        <div class="add-template-header-title flex-1">Template events and parameters</div>
+        <div class="add-template-header-title flex-1">Template events</div>
         <div class="help-icon-container">
           <paper-icon-button icon="icons:help-outline" class="help-icon"></paper-icon-button>
           <div class="help-info-container">
@@ -35,8 +35,8 @@ class IthAddTemplateListView extends PolymerElement {
         </div>
       </div>
       <div class="add-template-view-container">
-        <ith-event-list-view></ith-event-list-view>
-        <ith-parameter-list-view></ith-parameter-list-view>
+        <ith-event-list-view id="eventlist"></ith-event-list-view>
+        <!--<ith-parameter-list-view></ith-parameter-list-view> -->
       </div>
     `;
   }
@@ -48,6 +48,9 @@ class IthAddTemplateListView extends PolymerElement {
     }
   }
 
+  getEvents() {
+      return this.$.eventlist.getEvents();
+  }
 }
 
 window.customElements.define('ith-add-template-list-view', IthAddTemplateListView);

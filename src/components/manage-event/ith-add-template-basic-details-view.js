@@ -72,33 +72,34 @@ class IthAddTemplateBasicDetailsView extends (PolymerElement) {
         <div class="view-container layout horizontal flex-1"> 
           
           <div class="container layout vertical flex-1">
-            <div class="basic-detail-title">Template title:</div>
+            <div class="basic-detail-title">Template name</div>
             <iron-input bind-value="{{_templateTitle}}">
-               <input placeholder="eg. Getting out of Bed">
+               <input id="name" placeholder="eg. Getting out of Bed">
             </iron-input>
-            <div class="basic-detail-title basic-detail-title-padding">Short description:</div>
-            <textarea rows="5" autocomplete="off" placeholder="Please add short description to describe the template"></textarea>
-            <div class="basic-detail-title basic-detail-title-padding">Category:</div>
-            <ith-multi-select items="[[_eventTemplateCategories]]" 
-              placeholder-text="eg Health & Nutrition, Dementia" default-text="eg Health & Nutrition, Dementia">
+            <div class="basic-detail-title basic-detail-title-padding">Short description</div>
+            <textarea id="description" rows="5" autocomplete="off" placeholder="Please add short description to describe the template"></textarea>
+            <div class="basic-detail-title basic-detail-title-padding">Category</div>
+            <ith-multi-select id="category" items="[[_eventTemplateCategories]]" 
+              placeholder-text="eg Health & Nutrition, Patient Activity" default-text="eg Health & Nutrition, Patient Activity">
             </ith-multi-select>
           </div>
 
 
           <div class="add-info flex-1 layout vertical">
-            <ith-event-status-select label="Active/Inactive:"></ith-event-status-select>
-            <div class="title">Days of the week:</div>
-            <ith-multi-select is-string id="devices" items="[[_dayOfWeek]]" 
-            placeholder-text="Please select days of the week" default-text="Please select days of the week"></ith-multi-select>
+            <div class="basic-detail-title">Tag your template</div>
+            <iron-input bind-value="{{_templateTag}}">
+               <input id="tag" placeholder="eg. Dementia, Diabeties">
+            </iron-input>
             <paper-radio-group selected="{{_selected}}">
-              <paper-radio-button name="min">Min. vilolations</paper-radio-button>
-              <paper-radio-button name="max">Min/Max vilolations</paper-radio-button>
+              <paper-radio-button id="min" name="min">Min. vilolations</paper-radio-button>
+              <paper-radio-button id="max" name="max">Min/Max vilolations</paper-radio-button>
             </paper-radio-group>
             <ith-dropdown-menu 
               hidden="[[!_hideMinMaxRadionBtn]]"
               class="minmum-dropdown" 
               label="Minimum:" 
               name="Minimum"
+              id="minValue"
               items="[[_minMaxValue]]"
               value="10">
             </ith-dropdown-menu>
@@ -108,6 +109,7 @@ class IthAddTemplateBasicDetailsView extends (PolymerElement) {
                 class="min-drop-down flex-1" 
                 label="Minimum:" 
                 name="Minimum"
+                id="minMaxValue"
                 items="[[_minMaxValue]]"
                 value="1">
               </ith-dropdown-menu>
@@ -116,6 +118,7 @@ class IthAddTemplateBasicDetailsView extends (PolymerElement) {
                 class="drop-down flex-1" 
                 label="Maximum:" 
                 name="Maximum"
+                id="maxValue"
                 items="[[_minMaxValue]]"
                 value="2">
               </ith-dropdown-menu>
@@ -152,7 +155,7 @@ class IthAddTemplateBasicDetailsView extends (PolymerElement) {
        */
       _eventTemplateCategories: {
         type: Array,
-        value: () => []
+        value: [ { id: 'User Activities', name: 'User Activities'}, { id: 'Health & Nutrition', name: 'Health & Nutrition'}, { id: 'Security', name: 'Security'}, { id: 'Sensor Event', name: 'Sensor Event'} ]
       },
 
       _dayOfWeek: {
@@ -181,13 +184,6 @@ class IthAddTemplateBasicDetailsView extends (PolymerElement) {
     for(var i=0;i<=60;i++){
       number.push(i)
     }
-    setTimeout(() => {
-      var a  = self.shadowRoot.querySelector('ith-event-status-select');
-      var elDropDown = a.shadowRoot.querySelector('vaadin-dropdown-menu ');
-      var elTextField = elDropDown.shadowRoot.querySelector('vaadin-dropdown-menu-text-field');
-  
-      elTextField.setAttribute('class', 'add-template-status-drop-down');
-    }, 10); 
     this.set('_minMaxValue', number);
   }
 
@@ -204,6 +200,20 @@ class IthAddTemplateBasicDetailsView extends (PolymerElement) {
     }
 
     this.set('_hideMinMaxRadionBtn', false);
+  }
+
+  getEvent() {
+      var event = {};
+      event.name = this.$.name.value;
+      event.description = this.$.description.value;
+      if (this.$.category.value.length > 0) {
+          event.category = this.$.category.value[0];
+      }
+      event.tag = this.$.tag.value;
+      event.appliesTo = "subscriber"; //for now, carehome not implemented
+      event.eventType = "normal"; //current not modifiable?
+
+      return event;
   }
 }
 

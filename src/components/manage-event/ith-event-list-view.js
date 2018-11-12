@@ -3,7 +3,7 @@ import  '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '../../shared-styles/paper-button-styles';
 import '../../shared-styles/shared-styles';
 import "./ith-event-list-item.js";
-//import { openEventAddEditDialog } from '../../actions/patient-event-teplates,js';
+import './ith-event-add-edit-dialog.js';
 
 class IthEventListView extends (PolymerElement) {
   static get template() {
@@ -69,6 +69,7 @@ class IthEventListView extends (PolymerElement) {
         </template>
 
       </div>
+      <ith-event-add-edit-dialog id="addeditevent" on-add-event="addNewEvent"></ith-event-add-edit-dialog>
     `;
   }
 
@@ -76,34 +77,39 @@ class IthEventListView extends (PolymerElement) {
     return {
       _eventList: {
         type: Array,
-        value: function(){
-          return [{
-            'name': 'event1',
-            'id': 'event1',
-            'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-          },{
-            'name': 'event2',
-            'id': 'event2',
-            'description': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-          }]
-        }
+        value: []
       }
     }
   }
 
-  _openEventAddEditDialog(e){
-    if(!e || !e.detail){
-      return;
-    }
+  _addToEvents(evt) {
+  }
 
+  _openEventAddEditDialog(e){
+      this.$.addeditevent.open();
   }
 
   _deleteEvent(e) {
 
   }
 
+  addNewEvent(event) {
+      var evt = event.detail;
+      var evts = [];
+      for (var i = 0; i < this._eventList.length; i++) {
+          evts.push(this._eventList[i]);
+      }
+      evt.sequence = this._eventList.length + 1;
+      evts.push(evt);
+      this._eventList = evts;
+  }
+
   _stateChanged(state) {
 
+  }
+
+  getEvents() {
+      return this._eventList;
   }
 
 }

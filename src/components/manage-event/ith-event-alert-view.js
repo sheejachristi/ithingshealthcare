@@ -60,7 +60,6 @@ class IthEventAlertView extends PolymerElement {
               <paper-radio-button name="tale_not_palce">if it does not take place</paper-radio-button>
            </paper-radio-group>
         </div>
-        <div class="flex-1 editable-view layout vertical center-center">Editable on the front end?</div>
       </div>
 
       <div class="layout horizontal">
@@ -71,6 +70,7 @@ class IthEventAlertView extends PolymerElement {
             id="alertType" 
             label="Alert type"
             name="alertType"
+            id = "alertType"
             items="[[_alertTypes]]">
           </ith-dropdown-menu>
           <div class="layout vertical flex-1">
@@ -79,6 +79,7 @@ class IthEventAlertView extends PolymerElement {
               <ith-recipients-settings
                 items="[[recipents]]" 
                 name="recipients"
+                id="recipients"
                 input-value="[[inputValue]]">
               </ith-recipients-settings>
             </div>
@@ -102,15 +103,13 @@ class IthEventAlertView extends PolymerElement {
               </ith-dropdown-menu>
           </div>
         </div>
-        <paper-checkbox checked class="flex-1 editable-view layout vertical center-center"></paper-checkbox>
       </div>
       
       <div class="layout horizontal">
         <div class="layout vertical trigger-view-row-container flex-8">
           <div class="dropdown-title">Message:</div>
-          <textarea rows="5" autocomplete="off" placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry."></textarea>
+          <textarea rows="5" id="message" autocomplete="off" placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry."></textarea>
         </div>
-        <paper-checkbox checked="{{_checked}}"  class="flex-1 editable-view layout vertical center-center"></paper-checkbox>
       </div>
      </div>
     `;
@@ -161,7 +160,7 @@ class IthEventAlertView extends PolymerElement {
       _alertTypes: {
         type: Array,
         value: function(){
-          return ['Notification', 'Workflow', 'Forward to another system']
+          return ['No Action', 'Notification', 'Workflow', 'Forward to another system']
         }
       },
     }
@@ -198,6 +197,21 @@ class IthEventAlertView extends PolymerElement {
 
   _eq(str1, str2){
     return str1 === str2;
+  }
+
+  getActionDetails() {
+      var action = {};
+
+      action.deliveryType = this.$.alertType.value;
+      if (this.$.alertType.value == 'Notification') {
+          action.deliveryType = "email";
+          action.recipients = this.$.recipients.value;
+          action.message = this.$.message.value;
+      } else if (this.$.alertType.value == 'No Action') {
+          action.actionName = 'noaction';
+      }
+
+      return action;
   }
 }
 

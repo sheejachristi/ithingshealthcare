@@ -119,8 +119,11 @@ class MyApp extends PolymerElement {
       <securityflow-validatesession id="validatesess"></securityflow-validatesession>
       <telehealthcareflow-lookup id="lookup" on-lookup-success="_setupProfile"></telehealthcareflow-lookup>
 
-      <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
+      <app-route clear-data-on-reset route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
       </app-route>
+
+      <app-route route="{{subroute}}" pattern="/:page" data="{{subrouteData}}"
+                  query-params="{{queryParams}}"></app-route>
 
       <app-drawer-layout fullbleed="" narrow="{{narrow}}">
         <!-- Drawer content -->
@@ -208,13 +211,15 @@ class MyApp extends PolymerElement {
       },
       activedata: {
           type: String
-      }
+      },
+      queryParams: Object
     };
   }
 
   static get observers() {
     return [
-      '_routePageChanged(routeData.page)'
+      '_routePageChanged(routeData.page)',
+      '_onRoutingChange(subRouteData,queryParams)'
     ];
   }
 
@@ -398,6 +403,11 @@ class MyApp extends PolymerElement {
       this.set("route.__queryParams",  event.detail.activedata );
       this.set('route.path', "/" + event.detail.activepage);
       //window.location =  window.location.protocol + "//" + window.location.host + (this.rootPath + event.detail.activepage + "?" + event.detail.activedata);
+  }
+
+  _onRoutingChange(subRouteData, queryParams) {
+      console.log(subRouteData);
+      console.log(queryParams);
   }
 }
 

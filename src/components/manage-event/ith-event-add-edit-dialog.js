@@ -10,7 +10,6 @@ import '../../shared-styles/shared-styles';
 import '../../shared-styles/add-event-param-styles';
 import './ith-event-basic-detail-view.js';
 import './ith-event-trigger-view.js';
-import './ith-event-alert-view.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
 //import { closeEventAddEditDialog } from '../../actions/patient-event-teplates.js';
 
@@ -30,13 +29,12 @@ class IthEventAddEditDialog extends (mixinBehaviors([PaperDialogBehavior], Polym
     </div>
     <paper-dialog-scrollable dialog-element="[[_dialogElement]]">
       <div class="dialog-content-container">
-          <ith-event-basic-detail-view categories="[[_eventTemplateCategories]]"></ith-event-basic-detail-view>
-          <ith-event-trigger-view devices="[[_devices]]"></ith-event-trigger-view>
-          <ith-event-alert-view></ith-event-alert-view>
+          <ith-event-basic-detail-view id="basic" categories="[[_eventTemplateCategories]]"></ith-event-basic-detail-view>
+          <ith-event-trigger-view id="details"></ith-event-trigger-view>
       </div>
     </paper-dialog-scrollable>
     <div class="btn-container layout vertical end">
-      <paper-button class="filledWhite">
+      <paper-button on-tap="addEvent" class="filledWhite">
         add event
       </paper-button>
     </div>
@@ -86,11 +84,18 @@ class IthEventAddEditDialog extends (mixinBehaviors([PaperDialogBehavior], Polym
     return 'Edit event';
   }
 
-  _stateChanged(state) {
-    this.opened = state.patientEventTemplates.eventAddEditDialog.opened;
-    this._id = state.patientEventTemplates.eventAddEditDialog.id;
-    //this._eventTemplateCategories = getEventTemplateCategories(state);
-    //this._devices = getDevices(state);
+
+  addEvent() {
+      var evtTemplate = this.$.basic.getEventTemplate();
+      var evtDetails = this.$.details.getDetails();
+
+      evtDetails.name = evtTemplate.name;
+      evtDetails.description = evtTemplate.description;
+      evtDetails.category = evtTemplate.category;
+      evtDetails.tag = evtTemplate.tag;
+
+      this.dispatchEvent(new CustomEvent("add-event", { detail: evtDetails }));
+      this.close();
   }
 }
 

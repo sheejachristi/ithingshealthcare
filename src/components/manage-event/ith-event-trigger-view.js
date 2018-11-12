@@ -4,6 +4,8 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/editor-icons';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-checkbox/paper-checkbox';
+import '@polymer/paper-radio-button/paper-radio-button';
+import '@polymer/paper-radio-group/paper-radio-group.js';
 import '../../elements/ith-multi-select/ith-multi-select.js';
 import '../../elements/ith-dropdown-menu/ith-dropdown-menu.js';
 import '../../shared-styles/paper-button-styles';
@@ -21,9 +23,14 @@ class IthEventTriggerView extends PolymerElement {
       .frequency-width{
         width: 138px;
       }
+      .alert-text {
+        font-size: 16px;
+        font-family: 'Roboto-Regular';
+        color: var(--app-text-color);
+      }
       </style>
       <div class="layout horizontal add-template-header center">
-        <div class="add-template-header-title flex-1">Event trigger</div>
+        <div class="add-template-header-title flex-1">Events Settings</div>
           <div class="help-icon-container">
             <paper-icon-button icon="icons:help-outline" class="help-icon"></paper-icon-button>
             <div class="help-info-container">
@@ -49,61 +56,68 @@ class IthEventTriggerView extends PolymerElement {
        <div class="add-template-view-container">
         <div class="layout horizontal">
          <div class="layout horizontal trigger-view-row-container flex-8">
-          <div class="layout vertical flex-1 dropdown-margin">
-            <div class="dropdown-title">Device type:</div>
-            <ith-multi-select items="[[devices]]" value="[[_deviceValue]]"></ith-multi-select>
-          </div>
-          <ith-dropdown-menu value-is-object class="flex-1" items="[[_sensors]]"  value="sensor1" label="Sensor event:"></ith-dropdown-menu>
-         </div>
-         <div class="flex-1 editable-view layout vertical center-center">Editable on the front end?</div>
-        </div>
-        <div class="layout horizontal">
-         <div class="layout horizontal trigger-view-row-container flex-8">
           <ith-dropdown-menu 
             class="flex-1 dropdown-margin" 
-            value="{{_timePeriod}}" 
+            value="{{event.timeType}}" 
             name="timePeriod"
-            label="Time Period/Duration" 
+            label="Time schedule" 
             items="[[_timePeriodLabel]]"
+            id="timeType"
             on-value-changed="_onValueChanged">
           </ith-dropdown-menu>
           <div class="flex-1 layout horizontal">
             <ith-dropdown-menu 
                 hidden$="[[!_hideTimePeriodDropDown]]" 
-                value="9:00"
+                value="[[event.startTime]]"
                 name="timeFrom"
                 class="from-drop-down flex-1" 
                 placeholder="From"  
                 label="Time from" 
+                id="startTime"
                 items="[[_timePeriods]]">
             </ith-dropdown-menu>
             <ith-dropdown-menu 
-              value="14:00" 
+              value="[[event.endTime]]" 
               hidden$="[[!_hideTimePeriodDropDown]]" 
               class="flex-1" 
               placeholder="To"  
               name="timeTo"
               label="Time to" 
+              id="endTime"
               items="[[_timePeriods]]">
             </ith-dropdown-menu>
             <ith-dropdown-menu 
-              hidden$="[[_hideTimePeriodDropDown]]" 
+              value="[[event.time]]" 
+              hidden$="[[!_hideTime]]" 
+              class="flex-1" 
+              placeholder="Time"  
+              name="time"
+              label="Time" 
+              id="time"
+              items="[[_timePeriods]]">
+            </ith-dropdown-menu>
+            <ith-dropdown-menu 
+              hidden$="[[!_hideDuration]]" 
               class="frequency-width" 
               placeholder="Duration"
-              value="30 mins"
+              value="[[event.duration]]"
               name="duration"
               label="Time:" 
+              id="duration"
               items="[[_durations]]">
             </ith-dropdown-menu>
           </div>
          </div>
-         <paper-checkbox checked class="flex-1 editable-view layout vertical center-center"></paper-checkbox>
         </div>
         <div class="layout horizontal">
-          <div class="layout horizontal trigger-view-row-container flex-8">
-            <ith-dropdown-menu class="dropdown-width" value="1" items="[[_frequency]]" label="Frequency:"></ith-dropdown-menu>
+        <div class="layout vertical trigger-view-row-container flex-8">
+          <div class="alert-text">Will trigger event?</div>
+           <paper-radio-group selected="{{_selected}}">
+              <paper-radio-button name="take_palce">Yes</paper-radio-button>
+              <paper-radio-button name="tale_not_palce">No</paper-radio-button>
+           </paper-radio-group>
           </div>
-          <paper-checkbox checked="{{_checked}}"  class="flex-1 editable-view layout vertical center-center"></paper-checkbox>
+        </div>
         </div>
        </div>
     `;
@@ -133,7 +147,7 @@ class IthEventTriggerView extends PolymerElement {
       _timePeriodLabel: {
         type: Array,
         value: function(){
-          return ['Time Period', 'Duration']
+          return ['Time Period', 'Within', "At Time"]
         }
       },
 
@@ -162,6 +176,16 @@ class IthEventTriggerView extends PolymerElement {
       _hideTimePeriodDropDown: {
         type: Boolean,
         value: false
+      },
+
+      _hideDuration: {
+          type: Boolean,
+          value: false
+      },
+
+      _hideTime: {
+          type: Boolean,
+          value: false
       },
 
       _checked: {
@@ -194,12 +218,65 @@ class IthEventTriggerView extends PolymerElement {
   }
 
   _onValueChanged(e){
+    this.set('_hideTimePeriodDropDown', false);
+    this.set('_hideDuration', false);
+    this.set('_hideTime', false);
+
     if(e.target.value === 'Time Period'){
       this.set('_hideTimePeriodDropDown', true);
       return;
     }
+    if(e.target.value === 'Within'){
+      this.set('_hideDuration', true);
+      return;
+    }
+    if(e.target.value === 'At Time'){
+      this.set('_hideTime', true);
+      return;
+    }
 
-    this.set('_hideTimePeriodDropDown', false);
+  }
+
+  _appendedToday(time) {
+      var today = new Date();
+      var dd = today.getDate();
+      var mm = today.getMonth()+1; //January is 0!
+      var yyyy = today.getFullYear();
+
+      if(dd<10) {
+              dd = '0'+dd
+      } 
+
+      if(mm<10) {
+              mm = '0'+mm
+      } 
+
+      today = mm + '/' + dd + '/' + yyyy;
+      return today + ' ' + time;
+  }
+
+  _translate() {
+      var tt = this.$.timeType.value;
+      var time = {};
+      time.timeType = "AtTime";
+      if (tt == "Time Period") {
+          time.timeType = "TimePeriod";
+          time.startTime = this._appendedToday(this.$.startTime.value);
+          time.endTime = this._appendedToday(this.$.endTime.value);
+      } else if (tt == "Within") {
+          time.timeType = "WithinPrevious";
+          time.duration = parseInt(this.$.duration.value);
+      } else {
+          time.time = this._appendedToday(this.$.time.value);
+      }
+
+      return time;
+  }
+
+  getDetails() {
+      var time = this._translate();
+
+      return time;
   }
 }
 

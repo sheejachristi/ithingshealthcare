@@ -5,6 +5,8 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-button/paper-button';
 import './ith-add-template-basic-details-view.js';
 import './ith-add-template-list-view.js';
+import './ith-event-alert-view.js';
+import '../../api/telehealthcareflow-createeventtemplate.js';
 
 
 class IthAddTemplateView extends (PolymerElement) {
@@ -55,13 +57,15 @@ class IthAddTemplateView extends (PolymerElement) {
             <div class="cancel-title self-center">Cancel</div>
           </div>
         </div>
-        <ith-add-template-basic-details-view></ith-add-template-basic-details-view>
-        <ith-add-template-list-view></ith-add-template-list-view>
+        <ith-add-template-basic-details-view id="basic"></ith-add-template-basic-details-view>
+        <ith-add-template-list-view id="subevents"></ith-add-template-list-view>
+        <ith-event-alert-view id="action"></ith-event-alert-view>
         <div class="btn-container layout vertical end">
-          <paper-button class="filledWhite">
+          <paper-button class="filledWhite" on-tap="_saveTemplate">
             save template
           </paper-button>
         </div>
+        <telehealthcareflow-createeventtemplate id="createtemplate" on-created-eventtemplate="_successSave"></telehealthcareflow-createeventtemplate>
     `;
   }
 
@@ -74,6 +78,25 @@ class IthAddTemplateView extends (PolymerElement) {
 
   _hideCreateTemplateView() {
       this.dispatchEvent(new CustomEvent("hide-createtemplate"));
+  }
+
+  _saveTemplate() {
+      var evt = this.$.basic.getEvent();
+      var subevts = this.$.subevents.getEvents();
+      var act = this.$.action.getActionDetails();
+
+      if (act.actionName == undefined) {
+          act.actionName = evt.name + "action";
+      }
+
+      evt.actionName = act.actionName;
+      evt.eventDetails = subevts;
+
+      this.$.createtemplate.createEventTemplate(evt);
+  }
+
+  _successSave() {
+      this._hideCreateTemplateView();
   }
 }
 
